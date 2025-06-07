@@ -1,4 +1,4 @@
-package com.example.cardify.model
+package com.example.cardify.models
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
@@ -201,7 +201,7 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
                 
                 // Create the request with card info and answers
                 val request = SaveCardRequest(
-                    selectedImage = cardInfo.imageUrl,
+                    selectedImage = cardInfo.imageUrl ?: "",
                     cardInfo = cardInfo
                 )
                 
@@ -213,7 +213,7 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
                     isLoading = false,
                     isSaved = true,
                     savedCardId = response.id,
-                    card = cardInfo.copy(cardId = response.id)
+                    card = cardInfo.copy(cardid = response.id)
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

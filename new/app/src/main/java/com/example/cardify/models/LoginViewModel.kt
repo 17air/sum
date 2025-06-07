@@ -1,5 +1,5 @@
 // LoginViewModel.kt
-package com.example.cardify.model
+package com.example.cardify.models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

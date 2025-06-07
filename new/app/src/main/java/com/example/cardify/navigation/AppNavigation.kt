@@ -23,9 +23,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.cardify.auth.TokenManager
-import com.example.cardify.model.CardCreationViewModel
-import com.example.cardify.model.LoginViewModel
-import com.example.cardify.model.MainScreenViewModel
+import com.example.cardify.models.CardCreationViewModel
+import com.example.cardify.models.LoginViewModel
+import com.example.cardify.models.MainScreenViewModel
 import com.example.cardify.ui.screens.LoginScreen
 import com.example.cardify.ui.screens.MainEmptyScreen
 import com.example.cardify.ui.screens.MainExistScreen
@@ -168,23 +168,23 @@ fun AppNavigation() {
                     // MainExistScreen
                     MainExistScreen(
                         cardList = cards,
-                        onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
-                        },
-                        onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
+                        onAddCard = { navController.navigate(Screen.AddExisting.route) },
                         onCreateNewCard = {
                             cardCreationViewModel.resetCreation()
                             navController.navigate(Screen.CreateEssentials.route)
                         },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onCardClick = { card ->
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
+                        },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 } else {
                     // MainEmptyScreen
                     MainEmptyScreen(
-                        onCreateNewCard = { navController.navigate(Screen.CreateEssentials.route) },
+                        onCreateCardWithAI = { navController.navigate(Screen.CreateEssentials.route) },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 }
@@ -218,7 +218,7 @@ fun AppNavigation() {
                     MainExistScreen(
                         cardList = cards,
                         onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
                         },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
                         onCreateNewCard = {

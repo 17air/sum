@@ -1,6 +1,6 @@
 package com.example.cardify.data
 
-import com.example.cardify.model.BusinessCard
+import com.example.cardify.models.BusinessCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
