@@ -4,7 +4,6 @@ package com.example.cardify.models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cardify.api.RetrofitInstance
-import com.example.cardify.requestresponse.EmailCheckRequest
 import com.example.cardify.requestresponse.RegisterRequest
 import com.example.cardify.requestresponse.RegisterResponse
 import kotlinx.coroutines.flow.MutableStateFlow
