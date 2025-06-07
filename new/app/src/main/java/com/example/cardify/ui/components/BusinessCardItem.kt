@@ -1,7 +1,6 @@
 //BusinessCardItem.kt
 package com.example.cardify.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,24 +17,28 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cardify.R
-import com.example.cardify.models.BusinessCard
+import com.example.cardify.model.BusinessCard
 import com.example.cardify.ui.theme.PrimaryTeal
 
 @Composable
 fun BusinessCardItem(
     card: BusinessCard,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    onImageClick: ((String?) -> Unit)? = null,
+    onEditClick: (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier
@@ -65,19 +68,23 @@ fun BusinessCardItem(
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray),
+                    .background(Color.LightGray)
+                    .then(
+                        if (onImageClick != null) Modifier.clickable { onImageClick(card.imageUrl) } else Modifier
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                // If there's an image URL, load it, otherwise use a placeholder
-                if (true) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                if (card.imageUrl != null) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(card.imageUrl)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = "Profile picture",
                         modifier = Modifier.size(80.dp),
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    // Placeholder with first letter of name
                     Text(
                         text = card.name.firstOrNull()?.toString() ?: "",
                         color = Color.White,
@@ -122,6 +129,16 @@ fun BusinessCardItem(
                     text = card.phone,
                     fontSize = 12.sp,
                     color = Color.Gray
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            if (onEditClick != null) {
+                Text(
+                    text = "수정",
+                    color = PrimaryTeal,
+                    modifier = Modifier.clickable { onEditClick() }
                 )
             }
         }

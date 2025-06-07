@@ -33,6 +33,8 @@ import com.example.cardify.ui.screens.RegisterCompleteScreen
 import com.example.cardify.ui.screens.RegisterScreen
 import com.example.cardify.ui.screens.SplashScreen
 import com.example.cardify.ui.screens.CardListScreen
+import com.example.cardify.ui.screens.AddExistingScreen
+import com.example.cardify.ui.screens.SettingsScreen
 
 sealed class Screen(val route: String) {
     object AddAutoClassify : Screen("add_auto_classify/{imageUri}") {
@@ -168,23 +170,23 @@ fun AppNavigation() {
                     // MainExistScreen
                     MainExistScreen(
                         cardList = cards,
-                        onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
-                        },
-                        onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
+                        onAddCard = { navController.navigate(Screen.AddExisting.route) },
                         onCreateNewCard = {
                             cardCreationViewModel.resetCreation()
                             navController.navigate(Screen.CreateEssentials.route)
                         },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onCardClick = { card ->
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
+                        },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 } else {
                     // MainEmptyScreen
                     MainEmptyScreen(
-                        onCreateNewCard = { navController.navigate(Screen.CreateEssentials.route) },
+                        onCreateCardWithAI = { navController.navigate(Screen.CreateEssentials.route) },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 }
@@ -331,6 +333,14 @@ fun AppNavigation() {
                 navController = navController,
                 viewModel = cardCreationViewModel
             )
+        }
+
+        composable(Screen.AddExisting.route) {
+            AddExistingScreen(navController = navController)
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(navController = navController)
         }
 
         composable(Screen.CardList.route) {

@@ -1,8 +1,8 @@
 package com.example.cardify.requestresponse
 
 import android.net.Uri
-import com.example.cardify.models.BilingualData
-import com.example.cardify.models.BusinessCard
+import com.example.cardify.model.BilingualData
+import com.example.cardify.model.BusinessCard
 
 data class LoginRequest (
     val email: String,
@@ -13,6 +13,10 @@ data class RegisterRequest (
     val name: String,
     val email: String,
     val password: String
+)
+
+data class EmailCheckRequest(
+    val email: String
 )
 
 

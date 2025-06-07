@@ -1,7 +1,7 @@
 package com.example.cardify.api
 
-import com.example.cardify.models.AICardResponse
-import com.example.cardify.models.BusinessCard
+import com.example.cardify.model.AICardResponse
+import com.example.cardify.model.BusinessCard
 import com.example.cardify.requestresponse.CardEnrollRequest
 import com.example.cardify.requestresponse.CreateCardRequest
 import com.example.cardify.requestresponse.CreateCardResponse
