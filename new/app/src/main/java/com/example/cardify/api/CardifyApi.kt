@@ -5,7 +5,6 @@ import com.example.cardify.models.BusinessCard
 import com.example.cardify.requestresponse.CardEnrollRequest
 import com.example.cardify.requestresponse.CreateCardRequest
 import com.example.cardify.requestresponse.CreateCardResponse
-import com.example.cardify.requestresponse.EmailCheckRequest
 import com.example.cardify.requestresponse.EmailCheckResponse
 import com.example.cardify.requestresponse.LoginRequest
 import com.example.cardify.requestresponse.LoginResponse

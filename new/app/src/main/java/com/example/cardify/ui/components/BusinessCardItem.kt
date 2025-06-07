@@ -74,7 +74,7 @@ fun BusinessCardItem(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (card.imageUrl != null) {
+                if (card.imageUrl.isNotEmpty()) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(card.imageUrl)

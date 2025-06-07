@@ -13,6 +13,6 @@ class CardRepository {
     }
 
     fun updateCard(card: BusinessCard) {
-        _cards.value = _cards.value.map { if (it.cardid == card.cardid) card else it }
+        _cards.value = _cards.value.map { if (it.cardId == card.cardId) card else it }
     }
 }

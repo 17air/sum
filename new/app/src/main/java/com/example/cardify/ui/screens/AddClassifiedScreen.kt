@@ -80,8 +80,8 @@ fun AddClassifiedScreen(
                         
                         // Action buttons
                         Button(
-                            onClick = { 
-                                navController.navigate(Screen.CardBook.route)
+                            onClick = {
+                                navController.navigate(Screen.CardList.route)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {

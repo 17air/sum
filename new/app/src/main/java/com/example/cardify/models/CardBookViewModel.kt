@@ -14,7 +14,7 @@ class CardBookViewModel : ViewModel() {
 
     fun updateCard(updated: BusinessCard) {
         _cards.value = _cards.value.map {
-            if (it.cardid == updated.cardid) updated else it
+            if (it.cardId == updated.cardId) updated else it
         }
     }
 }

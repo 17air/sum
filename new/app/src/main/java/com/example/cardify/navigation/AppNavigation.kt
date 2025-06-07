@@ -176,7 +176,7 @@ fun AppNavigation() {
                             cardCreationViewModel.resetCreation()
                             navController.navigate(Screen.CreateEssentials.route)
                         },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 } else {
@@ -184,7 +184,7 @@ fun AppNavigation() {
                     MainEmptyScreen(
                         onCreateNewCard = { navController.navigate(Screen.CreateEssentials.route) },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 }
@@ -211,7 +211,7 @@ fun AppNavigation() {
                             navController.navigate(Screen.CreateEssentials.route)
                         },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 } else {
@@ -225,7 +225,7 @@ fun AppNavigation() {
                             cardCreationViewModel.resetCreation()
                             navController.navigate(Screen.CreateEssentials.route)
                         },
-                        onNavigateToCardList = { navController.navigate(Screen.CardList.route) },
+                        onNavigateToCardBook = { navController.navigate(Screen.CardList.route) },
                         onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                     )
                 }
