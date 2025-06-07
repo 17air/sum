@@ -23,9 +23,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.cardify.auth.TokenManager
-import com.example.cardify.model.CardCreationViewModel
-import com.example.cardify.model.LoginViewModel
-import com.example.cardify.model.MainScreenViewModel
+import com.example.cardify.models.CardCreationViewModel
+import com.example.cardify.models.LoginViewModel
+import com.example.cardify.models.MainScreenViewModel
 import com.example.cardify.ui.screens.LoginScreen
 import com.example.cardify.ui.screens.MainEmptyScreen
 import com.example.cardify.ui.screens.MainExistScreen
@@ -169,7 +169,7 @@ fun AppNavigation() {
                     MainExistScreen(
                         cardList = cards,
                         onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
                         },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
                         onCreateNewCard = {
@@ -218,7 +218,7 @@ fun AppNavigation() {
                     MainExistScreen(
                         cardList = cards,
                         onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
                         },
                         onAddExistingCard = { navController.navigate(Screen.AddExisting.route) },
                         onCreateNewCard = {

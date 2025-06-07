@@ -30,8 +30,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import kotlinx.coroutines.tasks.await
-import com.example.cardify.model.BusinessCard
-import com.example.cardify.model.CardBookViewModel
+import com.example.cardify.models.BusinessCard
+import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.util.TextParser
 import kotlinx.coroutines.launch
 
