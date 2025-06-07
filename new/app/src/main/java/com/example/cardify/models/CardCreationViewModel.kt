@@ -210,7 +210,7 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
                 
                 // Create the request with card info and answers
                 val request = SaveCardRequest(
-                    selectedImage = cardInfo.imageUrl,
+                    selectedImage = cardInfo.imageUrl ?: "",
                     cardInfo = cardInfo
                 )
                 
