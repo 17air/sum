@@ -26,13 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.cardify.models.CardCreationViewModel
+import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddClassifiedScreen(
     navController: NavController,
-    viewModel: CardCreationViewModel
+    viewModel: CardCreationViewModel,
+    bookViewModel: CardBookViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -81,6 +83,7 @@ fun AddClassifiedScreen(
                         // Action buttons
                         Button(
                             onClick = {
+                                bookViewModel.addCard(viewModel.uiState.value.card)
                                 navController.navigate(Screen.CardList.route)
                             },
                             modifier = Modifier.fillMaxWidth()

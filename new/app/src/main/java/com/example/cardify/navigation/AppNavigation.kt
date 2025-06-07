@@ -26,6 +26,7 @@ import com.example.cardify.auth.TokenManager
 import com.example.cardify.models.CardCreationViewModel
 import com.example.cardify.models.LoginViewModel
 import com.example.cardify.models.MainScreenViewModel
+import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.ui.screens.LoginScreen
 import com.example.cardify.ui.screens.MainEmptyScreen
 import com.example.cardify.ui.screens.MainExistScreen
@@ -33,6 +34,7 @@ import com.example.cardify.ui.screens.RegisterCompleteScreen
 import com.example.cardify.ui.screens.RegisterScreen
 import com.example.cardify.ui.screens.SplashScreen
 import com.example.cardify.ui.screens.CardListScreen
+import com.example.cardify.ui.screens.AddExistingScreen
 
 sealed class Screen(val route: String) {
     object AddAutoClassify : Screen("add_auto_classify/{imageUri}") {
@@ -76,6 +78,7 @@ fun AppNavigation() {
     val currentQuestion by cardCreationViewModel.currentQuestion.collectAsState()
     val loginViewModel: LoginViewModel = viewModel()
     val mainScreenViewModel: MainScreenViewModel = viewModel()
+    val cardBookViewModel: CardBookViewModel = viewModel()
 
     //Navhost maps object(e.g.Splash) to Screen.kt
     //Start Destination fixed to Splash, which indicates SplashScreen.
@@ -329,16 +332,22 @@ fun AppNavigation() {
         composable(Screen.AddClassified.route) {
             AddClassifiedScreen(
                 navController = navController,
-                viewModel = cardCreationViewModel
+                viewModel = cardCreationViewModel,
+                bookViewModel = cardBookViewModel
             )
         }
 
+        composable(Screen.AddExisting.route) {
+            AddExistingScreen(navController = navController)
+        }
+
         composable(Screen.CardList.route) {
+            val cards by cardBookViewModel.cards.collectAsState()
             CardListScreen(
-                cards = emptyList(),
+                cards = cards,
                 onNavigateToMain = { navController.navigate(Screen.Main.route) },
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
-                onUpdateCard = { }
+                onUpdateCard = { cardBookViewModel.updateCard(it) }
             )
         }
 
