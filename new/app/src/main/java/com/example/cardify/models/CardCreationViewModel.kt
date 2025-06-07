@@ -24,7 +24,16 @@ sealed class CardCreationState {
 
 data class CardCreationUiState(
     val cardImages: List<String> = emptyList(),
-    val card: BusinessCard = BusinessCard(),
+    val card: BusinessCard = BusinessCard(
+        cardid = "",
+        name = "",
+        company = "",
+        position = "",
+        phone = "",
+        email = "",
+        sns = "",
+        imageUrl = null
+    ),
     val isLoading: Boolean = false,
     val error: String? = null,
     val isSaved: Boolean = false,
@@ -213,7 +222,7 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
                     isLoading = false,
                     isSaved = true,
                     savedCardId = response.id,
-                    card = cardInfo.copy(cardId = response.id)
+                    card = cardInfo.copy(cardid = response.id)
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
