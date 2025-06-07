@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.sp
 
 import com.example.cardify.auth.TokenManager
 import com.example.cardify.models.LoginViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cardify.models.MainScreenViewModel
 import com.example.cardify.ui.components.PrimaryButton
 import com.example.cardify.ui.components.SimpleTextField
 
@@ -47,6 +50,9 @@ fun LoginScreen(
 
     val context = LocalContext.current
     val tokenManager = remember { TokenManager(context) }
+    val mainViewModel: MainScreenViewModel = viewModel()
+    val cards by mainViewModel.cards.collectAsStateWithLifecycle()
+    val hasCards by mainViewModel.hasCards.collectAsStateWithLifecycle()
 
 
     //API 응답 받아 성공/실패 처리
@@ -55,11 +61,22 @@ fun LoginScreen(
         loginResult?.onSuccess { response ->
             tokenManager.saveToken(response.token)
             loginViewModel.clearResult()
+            // Fetch user's cards after successful login
+            mainViewModel.fetchCards(response.token)
             onNavigateToMain()
         }?.onFailure {
             showError = true
             errorMessage = "로그인에 실패했어요. 이메일과 비밀번호를 다시 확인해주세요."
             isLoading = false
+        }
+    }
+
+    // Observe cards state changes
+    LaunchedEffect(cards) {
+        if (cards.isNotEmpty()) {
+            onNavigateToMain()
+        } else if (loginResult != null && cards.isEmpty()) {
+            onNavigateToMain()
         }
     }
 
