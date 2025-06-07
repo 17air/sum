@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cardify.auth.TokenManager
-import com.example.cardify.model.LoginViewModel
-import com.example.cardify.model.MainScreenViewModel
+import com.example.cardify.models.LoginViewModel
+import com.example.cardify.models.MainScreenViewModel
 import com.example.cardify.ui.components.PrimaryButton
 import com.example.cardify.ui.components.SimpleTextField
 

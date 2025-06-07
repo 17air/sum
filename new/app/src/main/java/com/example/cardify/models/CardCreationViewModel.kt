@@ -1,4 +1,4 @@
-package com.example.cardify.model
+package com.example.cardify.models
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
