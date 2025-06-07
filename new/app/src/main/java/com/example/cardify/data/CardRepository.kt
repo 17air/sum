@@ -1,6 +1,6 @@
 package com.example.cardify.data
 
-import com.example.cardify.model.BusinessCard
+import com.example.cardify.models.BusinessCard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,6 +13,6 @@ class CardRepository {
     }
 
     fun updateCard(card: BusinessCard) {
-        _cards.value = _cards.value.map { if (it.cardid == card.cardid) card else it }
+        _cards.value = _cards.value.map { if (it.cardId == card.cardId) card else it }
     }
 }

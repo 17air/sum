@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cardify.model.BusinessCard
+import com.example.cardify.models.BusinessCard
 import com.example.cardify.ui.components.BottomNavBar
 import com.example.cardify.ui.components.BusinessCardItem
 

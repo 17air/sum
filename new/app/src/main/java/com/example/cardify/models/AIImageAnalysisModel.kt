@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/cardify/models/AIImageAnalysisModel.kt
-package com.example.cardify.model
+package com.example.cardify.models
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel

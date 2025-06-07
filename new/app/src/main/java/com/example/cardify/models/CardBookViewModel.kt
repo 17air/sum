@@ -1,4 +1,4 @@
-package com.example.cardify.model
+package com.example.cardify.models
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ class CardBookViewModel : ViewModel() {
 
     fun updateCard(updated: BusinessCard) {
         _cards.value = _cards.value.map {
-            if (it.cardid == updated.cardid) updated else it
+            if (it.cardId == updated.cardId) updated else it
         }
     }
 }

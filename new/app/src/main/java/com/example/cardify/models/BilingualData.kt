@@ -1,4 +1,4 @@
-package com.example.cardify.model
+package com.example.cardify.models
 
 data class BilingualData(
     val korean: String = "",

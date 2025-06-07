@@ -1,4 +1,4 @@
-package com.example.cardify.model
+package com.example.cardify.models
 //base-64
 
 data class AICardResponse(

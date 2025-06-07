@@ -1,4 +1,4 @@
-package com.example.cardify.model
+package com.example.cardify.models
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
@@ -159,7 +159,7 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
                     company = card.company,
                     position = card.position,
                     phone = card.phone,
-                    sns = card.sns ?: "",
+                    sns = card.sns,
                     base64Image = base64Image
                 )
 
