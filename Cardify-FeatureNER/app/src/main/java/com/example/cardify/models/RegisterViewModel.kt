@@ -21,7 +21,7 @@ class RegisterViewModel : ViewModel() {
     fun checkEmail(email: String) {
         viewModelScope.launch {
             try {
-                val result = RetrofitInstance.api.checkEmail(EmailCheckRequest(email))
+                val result = RetrofitInstance.api.checkEmail(email)
                 _emailCheckResult.value = result.available
             } catch (e: Exception) {
                 _emailCheckResult.value = false

@@ -65,7 +65,7 @@ fun QuestionScreen(
         Spacer(modifier = Modifier.height(24.dp))
         
         // Options
-        currentQuestion.options.forEachIndexed { index, option ->
+        currentQuestion.options.forEachIndexed { index: Int, option: String ->
             Button(
                 onClick = { viewModel.selectOption(index) },
                 modifier = Modifier

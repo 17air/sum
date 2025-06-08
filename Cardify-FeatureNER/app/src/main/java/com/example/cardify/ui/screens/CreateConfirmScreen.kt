@@ -22,7 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +40,8 @@ fun CreateConfirmScreen(
     onBackClick: () -> Unit,
     onAddDetailsClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
-    onHomeClick: () -> Unit = {}
+    onHomeClick: () -> Unit = {},
+    onSaveClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -192,10 +196,24 @@ fun CreateConfirmScreen(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryTeal,
-                    contentColor = MaterialTheme.colorScheme.surface
+                    contentColor = Color.White
                 )
             ) {
-                Text("이 명함으로 결정할게요.")
+                Text("명함 생성 완료하기")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onSaveClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = PrimaryTeal
+                ),
+                border = BorderStroke(1.dp, PrimaryTeal)
+            ) {
+                Text("저장")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -215,19 +233,34 @@ fun CreateConfirmScreen(
 }
 
 @Composable
-fun CardImage(cardId: String) {
-    val cardResource = when (cardId) {
-        "1" -> R.drawable.card_one
-        "2" -> R.drawable.card_two
-        "3" -> R.drawable.card_three
-        "4" -> R.drawable.card_four
-        "5" -> R.drawable.card_five
-        else -> R.drawable.card_placeholder
-    }
+fun CardImage(
+    cardId: String,
+    imageUrl: String? = null
+) {
+    if (!imageUrl.isNullOrEmpty()) {
+        // For network images
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = "Business Card Design",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+    } else {
+        // For local drawable resources (fallback)
+        val cardResource = when (cardId) {
+            "1" -> R.drawable.card_one
+            "2" -> R.drawable.card_two
+            "3" -> R.drawable.card_three
+            "4" -> R.drawable.card_four
+            "5" -> R.drawable.card_five
+            else -> R.drawable.card_placeholder
+        }
 
-    Image(
-        painter = painterResource(id = cardResource),
-        contentDescription = "Business Card Design",
-        modifier = Modifier.fillMaxSize()
-    )
+        Image(
+            painter = painterResource(id = cardResource),
+            contentDescription = "Business Card Design",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+    }
 }

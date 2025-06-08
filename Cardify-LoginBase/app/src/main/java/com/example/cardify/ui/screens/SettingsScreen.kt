@@ -1,29 +1,33 @@
 package com.example.cardify.ui.screens
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
-    navController: NavController
-) {}/* {
-    var isDarkMode by remember { mutableStateOf(false) }
-    var isNotificationsEnabled by remember { mutableStateOf(true) }
-    var language by remember { mutableStateOf("한국어") }
-
+fun SettingsScreen(navController: NavController, onLogout: () -> Unit) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = { Text("설정") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -35,99 +39,12 @@ fun SettingsScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            // Theme Settings
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+            Button(
+                onClick = onLogout,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "테마",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Switch(
-                        checked = isDarkMode,
-                        onCheckedChange = { isDarkMode = it },
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-            }
-
-            // Notifications Settings
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "알림",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Switch(
-                        checked = isNotificationsEnabled,
-                        onCheckedChange = { isNotificationsEnabled = it },
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-            }
-
-            // Language Settings
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "언어",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    DropdownMenu(
-                        expanded = language != "한국어",
-                        onDismissRequest = { language = "한국어" }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("한국어") },
-                            onClick = { language = "한국어" }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("영어") },
-                            onClick = { language = "영어" }
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Logout Button
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Button(
-                    onClick = { /* TODO: Implement logout functionality */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                ) {
-                    Text("로그아웃")
-                }
+                Text("로그아웃")
             }
         }
     }
 }
-*/

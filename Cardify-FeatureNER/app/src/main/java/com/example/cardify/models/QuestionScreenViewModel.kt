@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.cardify.features.Question
+import com.example.cardify.features.QuestionBank
 
 @SuppressLint("MutableCollectionMutableState", "AutoboxingStateCreation")
 class QuestionScreenViewModel : ViewModel() {

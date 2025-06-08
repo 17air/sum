@@ -37,7 +37,7 @@ import com.example.cardify.ui.theme.PrimaryTeal
 @Composable
 fun CreateQuestionScreen(
     questionNumber: Int,
-    onAnswerSelected: (Int) -> Unit,
+    onAnswerSelected: (String) -> Unit,
     onCancelClick: () -> Unit
 ) {
     val questions = listOf(
@@ -123,7 +123,7 @@ fun CreateQuestionScreen(
                 isSelected = selectedOption == 0,
                 onClick = {
                     selectedOption = 0
-                    onAnswerSelected(0)
+                    onAnswerSelected("0")
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -133,7 +133,7 @@ fun CreateQuestionScreen(
                 isSelected = selectedOption == 1,
                 onClick = {
                     selectedOption = 1
-                    onAnswerSelected(1)
+                    onAnswerSelected("1")
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -152,7 +152,7 @@ fun CreateQuestionScreen(
                 isSelected = selectedOption == 2,
                 onClick = {
                     selectedOption = 2
-                    onAnswerSelected(2)
+                    onAnswerSelected("2")
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -162,7 +162,7 @@ fun CreateQuestionScreen(
                 isSelected = selectedOption == 3,
                 onClick = {
                     selectedOption = 3
-                    onAnswerSelected(3)
+                    onAnswerSelected("3")
                 },
                 modifier = Modifier.weight(1f)
             )

@@ -27,6 +27,7 @@ import com.example.cardify.ui.screens.MainEmptyScreen
 import com.example.cardify.ui.screens.MainExistScreen
 import com.example.cardify.ui.screens.OcrNerScreen
 import com.example.cardify.ui.screens.CardBookScreen
+import com.example.cardify.ui.screens.SettingsScreen
 import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.ui.screens.RegisterCompleteScreen
 import com.example.cardify.ui.screens.RegisterScreen
@@ -75,7 +76,8 @@ fun AppNavigation() {
     val navController = rememberNavController()
 
     val cardCreationViewModel: CardCreationViewModel = viewModel()
-    val cardInfo by cardCreationViewModel.cardInfo.collectAsState()
+    val uiState by cardCreationViewModel.uiState.collectAsState()
+    val cardInfo = uiState.card
     val currentQuestion by cardCreationViewModel.currentQuestion.collectAsState()
     val selectedCardId by cardCreationViewModel.selectedCardId.collectAsState()
 
@@ -154,7 +156,7 @@ fun AppNavigation() {
                     MainExistScreen(
                         cardList = cards,
                         onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
                         },
                         onAddCard = { navController.navigate(Screen.OcrNer.route) },
                         onCreateNewCard = {
@@ -169,11 +171,16 @@ fun AppNavigation() {
         }
 
         composable(route = Screen.CreateEssentials.route) {
+            val tokenManager = TokenManager(LocalContext.current)
+            val token = tokenManager.getToken() ?: ""
+
             CreateEssentialsScreen(
                 cardInfo = cardInfo,
                 onCardInfoChange = { cardCreationViewModel.updateCardInfo(it) },
                 onNextClick = { navController.navigate(Screen.CreateQuestion.route) },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                viewModel = cardCreationViewModel,
+                token = token
             )
         }
 
@@ -194,10 +201,14 @@ fun AppNavigation() {
         }
 
         composable(route = Screen.CreateProgress.route) {
+            val tokenManager = TokenManager(LocalContext.current)
+            val token = tokenManager.getToken() ?: ""
+
             CreateProgressScreen(
                 cardInfo = cardInfo,
-                userAnswers = cardCreationViewModel.answers.value,
                 viewModel = cardCreationViewModel,
+                token = token,
+                cardBookViewModel = cardBookViewModel,
                 onProgressComplete = {
                     navController.navigate(Screen.CreateDesign.route)
                 },
@@ -211,8 +222,8 @@ fun AppNavigation() {
         composable(route = Screen.CreateDesign.route) {
             CreateDesignScreen(
                 isFirst = true,
-                onCardSelected = { cardId ->
-                    cardCreationViewModel.selectCard(cardId)
+                onCardSelected = { cardId, _ ->
+                    cardCreationViewModel.selectAndSaveCard(cardId)
                     navController.navigate(Screen.CreateDesign.route + "?showOptions=true")
                 },
                 onCancelClick = {
@@ -225,8 +236,8 @@ fun AppNavigation() {
         composable(route = Screen.CreateDesign.route + "?showOptions=true") {
             CreateDesignScreen(
                 isFirst = false,
-                onCardSelected = { cardId ->
-                    cardCreationViewModel.selectCard(cardId)
+                onCardSelected = { cardId, _ ->
+                    cardCreationViewModel.selectAndSaveCard(cardId)
                     navController.navigate(Screen.CreateConfirm.route)
                 },
                 onCancelClick = {
@@ -275,14 +286,22 @@ fun AppNavigation() {
 
         composable(route = Screen.CardBook.route) {
             val cards by cardBookViewModel.cards.collectAsState()
+            val highlighted by cardBookViewModel.highlightedCardId.collectAsState()
             CardBookScreen(
                 cards = cards,
+                highlightedCardId = highlighted,
                 onNavigateToMain = { navController.navigate(Screen.Main.route) },
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                 onUpdateCard = { cardBookViewModel.updateCard(it) }
             )
         }
-        composable(route = Screen.Settings.route) {}
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(navController = navController) {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(Screen.Main.route) { inclusive = true }
+                }
+            }
+        }
         composable(route = Screen.CardDetail.route + "/{cardId}") {
             val cardId = it.arguments?.getString("cardId")
             // TODO: Implement CardDetailScreen

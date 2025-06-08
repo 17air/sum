@@ -22,25 +22,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cardify.models.BusinessCardInfo
+import com.example.cardify.models.BusinessCard
+import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.models.CardCreationViewModel
 import com.example.cardify.ui.theme.PrimaryTeal
 import kotlinx.coroutines.delay
 
 @Composable
 fun CreateProgressScreen(
-    cardInfo: BusinessCardInfo,
-    userAnswers: List<Int>,
+    cardInfo: BusinessCard,
     onProgressComplete: () -> Unit,
     onCancelClick: () -> Unit,
-    viewModel: CardCreationViewModel
+    viewModel: CardCreationViewModel,
+    token: String,
+    cardBookViewModel: CardBookViewModel
 ) {
     LaunchedEffect(key1 = true) {
         // Call AI API with card info and user answers
-        viewModel.createCardWithAI(cardInfo, userAnswers)
-        
+    viewModel.createCardWithAI(cardInfo, token)
+
         // Wait for API response
         delay(3000) // 3 seconds delay for API processing
+
+        // Create a local card object for the card book
+        val card = cardInfo.copy(cardId = System.currentTimeMillis().toString())
+        cardBookViewModel.addCard(card)
         onProgressComplete()
     }
 

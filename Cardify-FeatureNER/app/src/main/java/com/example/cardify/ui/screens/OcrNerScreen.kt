@@ -3,8 +3,12 @@ package com.example.cardify.ui.screens
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,6 +57,12 @@ fun OcrNerScreen(
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
         if (bitmap != null) {
             selectedImage.value = saveBitmapToCache(context, bitmap)
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            cameraLauncher.launch(null)
         }
     }
 
@@ -101,14 +110,20 @@ fun OcrNerScreen(
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            Button(onClick = { cameraLauncher.launch(null) }) {
+            Button(onClick = {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    cameraLauncher.launch(null)
+                } else {
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }) {
                 Text("사진 찍기")
             }
 
             if (selectedImage.value != null && parsedCard != null) {
                 Button(onClick = {
                     coroutineScope.launch {
-                        val card = parsedCard!!.copy(imageUrl = selectedImage.value?.toString())
+                        val card = parsedCard!!.copy(imageUrl = selectedImage.value?.toString() ?: "")
                         viewModel.addCard(card)
                         onComplete()
                     }

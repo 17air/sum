@@ -268,7 +268,6 @@ fun AppNavigation() {
             
             CreateProgressScreen(
                 cardInfo = uiState.card,
-                userAnswers = cardCreationViewModel.answers.value as List<String>,
                 viewModel = cardCreationViewModel,
                 onProgressComplete = {
                     navController.navigate(Screen.CreateDesign.route)
