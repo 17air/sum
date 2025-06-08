@@ -27,7 +27,7 @@ class MainScreenViewModel : ViewModel() {
                 // "Bearer <token>" 형식으로 헤더 작성
                 val bearerToken = "Bearer $token"
                 // Retrofit을 사용하여 API 호출
-                val result = RetrofitInstance.api.getUserCards(bearerToken)
+                val result = RetrofitInstance.api.getUserCards(bearerToken, true)
                 _cards.value = result
                 _hasCards.value = result.isNotEmpty()
             } catch (e: Exception) {

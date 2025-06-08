@@ -170,11 +170,16 @@ fun AppNavigation() {
         }
 
         composable(route = Screen.CreateEssentials.route) {
+            val tokenManager = TokenManager(LocalContext.current)
+            val token = tokenManager.getToken() ?: ""
+
             CreateEssentialsScreen(
                 cardInfo = cardInfo,
                 onCardInfoChange = { cardCreationViewModel.updateCardInfo(it) },
                 onNextClick = { navController.navigate(Screen.CreateQuestion.route) },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                viewModel = cardCreationViewModel,
+                token = token
             )
         }
 
@@ -195,11 +200,14 @@ fun AppNavigation() {
         }
 
         composable(route = Screen.CreateProgress.route) {
+            val tokenManager = TokenManager(LocalContext.current)
+            val token = tokenManager.getToken() ?: ""
+
             CreateProgressScreen(
                 cardInfo = cardInfo,
                 userAnswers = cardCreationViewModel.answers.value.values.toList(),
                 viewModel = cardCreationViewModel,
-                token = token ?: "",
+                token = token,
                 cardBookViewModel = cardBookViewModel,
                 onProgressComplete = {
                     navController.navigate(Screen.CreateDesign.route)

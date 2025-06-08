@@ -47,6 +47,7 @@ fun CreateDesignScreen(
     onCardSelected: (String, String) -> Unit, 
     onCancelClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val designs = remember(generatedCardImages) {
         if (generatedCardImages.isNotEmpty()) {
             // Use generated card images if available
@@ -133,11 +134,11 @@ fun CreateDesignScreen(
             CardDesignItem(
                 design = design,
                 onClick = {
-                    val base64Image = design.imageUrl.takeIf { it.isNotBlank() } 
+                    val base64Image = design.imageUrl.takeIf { it.isNotBlank() }
                         ?: design.imageResId?.let { resId ->
                             // Convert drawable to Base64
                             val bitmap = BitmapFactory.decodeResource(
-                                LocalContext.current.resources,
+                                context.resources,
                                 resId
                             )
                             ImageUtils.bitmapToBase64(bitmap)
