@@ -61,7 +61,7 @@ fun CardBookScreen(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         onImageClick = { url -> selectedImage.value = url },
                         onEditClick = { editingCard.value = card },
-                        isHighlighted = card.cardid == highlightedCardId
+                        isHighlighted = card.cardId == highlightedCardId
                     )
                 }
             }

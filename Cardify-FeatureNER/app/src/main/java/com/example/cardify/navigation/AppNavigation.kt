@@ -75,7 +75,8 @@ fun AppNavigation() {
     val navController = rememberNavController()
 
     val cardCreationViewModel: CardCreationViewModel = viewModel()
-    val cardInfo by cardCreationViewModel.cardInfo.collectAsState()
+    val uiState by cardCreationViewModel.uiState.collectAsState()
+    val cardInfo = uiState.card
     val currentQuestion by cardCreationViewModel.currentQuestion.collectAsState()
     val selectedCardId by cardCreationViewModel.selectedCardId.collectAsState()
 
@@ -154,7 +155,7 @@ fun AppNavigation() {
                     MainExistScreen(
                         cardList = cards,
                         onCardClick = { card ->
-                            navController.navigate(Screen.CardDetail.createRoute(card.cardid))
+                            navController.navigate(Screen.CardDetail.createRoute(card.cardId))
                         },
                         onAddCard = { navController.navigate(Screen.OcrNer.route) },
                         onCreateNewCard = {
@@ -196,8 +197,9 @@ fun AppNavigation() {
         composable(route = Screen.CreateProgress.route) {
             CreateProgressScreen(
                 cardInfo = cardInfo,
-                userAnswers = cardCreationViewModel.answers.value,
+                userAnswers = cardCreationViewModel.answers.value.values.toList(),
                 viewModel = cardCreationViewModel,
+                token = token ?: "",
                 cardBookViewModel = cardBookViewModel,
                 onProgressComplete = {
                     navController.navigate(Screen.CreateDesign.route)
@@ -212,8 +214,8 @@ fun AppNavigation() {
         composable(route = Screen.CreateDesign.route) {
             CreateDesignScreen(
                 isFirst = true,
-                onCardSelected = { cardId ->
-                    cardCreationViewModel.selectCard(cardId)
+                onCardSelected = { cardId, image ->
+                    cardCreationViewModel.selectAndSaveCard(cardId, image)
                     navController.navigate(Screen.CreateDesign.route + "?showOptions=true")
                 },
                 onCancelClick = {
@@ -226,8 +228,8 @@ fun AppNavigation() {
         composable(route = Screen.CreateDesign.route + "?showOptions=true") {
             CreateDesignScreen(
                 isFirst = false,
-                onCardSelected = { cardId ->
-                    cardCreationViewModel.selectCard(cardId)
+                onCardSelected = { cardId, image ->
+                    cardCreationViewModel.selectAndSaveCard(cardId, image)
                     navController.navigate(Screen.CreateConfirm.route)
                 },
                 onCancelClick = {

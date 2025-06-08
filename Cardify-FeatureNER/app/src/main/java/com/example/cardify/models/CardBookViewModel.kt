@@ -13,12 +13,12 @@ class CardBookViewModel : ViewModel() {
 
     fun addCard(card: BusinessCard) {
         _cards.value = listOf(card) + _cards.value
-        _highlightedCardId.value = card.cardid
+        _highlightedCardId.value = card.cardId
     }
 
     fun updateCard(updated: BusinessCard) {
         _cards.value = _cards.value.map {
-            if (it.cardid == updated.cardid) updated else it
+            if (it.cardId == updated.cardId) updated else it
         }
     }
 

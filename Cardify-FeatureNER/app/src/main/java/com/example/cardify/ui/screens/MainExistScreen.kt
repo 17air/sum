@@ -83,7 +83,7 @@ fun MainExistScreen(
             ) {
                 items(cardList) { cardResponse ->
                     val card = BusinessCard(
-                        cardid = cardResponse.cardId.toString(),
+                        cardId = cardResponse.cardId.toString(),
                         name = cardResponse.name,
                         company = cardResponse.company,
                         position = cardResponse.position,

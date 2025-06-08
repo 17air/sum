@@ -1,155 +1,253 @@
-// Create a file: app/src/main/java/com/example/cardify/viewmodel/CardCreationViewModel.kt
 package com.example.cardify.models
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cardify.api.CardifyApi
 import com.example.cardify.api.RetrofitInstance
-import com.example.cardify.requestresponse.BilingualTextData
-import com.example.cardify.requestresponse.CreateCardRequest
-import com.example.cardify.requestresponse.CreateCardResponse
+import com.example.cardify.api.SaveCardRequest
+import com.example.cardify.requestresponse.CardEnrollRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 
 sealed class CardCreationState {
     object Loading : CardCreationState()
-    data class Success(val response: CreateCardResponse) : CardCreationState()
+    object Success : CardCreationState()
     data class Error(val message: String) : CardCreationState()
 }
 
-class CardCreationViewModel : ViewModel() {
-    private val _cardCreationState = mutableStateOf<CardCreationState>(CardCreationState.Loading)
-    val cardCreationState: State<CardCreationState> = _cardCreationState
-    
-    private val _token = mutableStateOf("")
-    val token: State<String> = _token
+data class CardCreationUiState(
+    val cardImages: List<String> = emptyList(),
+    val card: BusinessCard = BusinessCard(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val isSaved: Boolean = false,
+    val savedCardId: String? = null
+)
 
-    private val _creationResult = MutableStateFlow<Result<CreateCardResponse>?>(null)
-    val creationResult: StateFlow<Result<CreateCardResponse>?> = _creationResult
-    private val _cardInfo = MutableStateFlow(BusinessCardInfo())
-    val cardInfo: StateFlow<BusinessCardInfo> = _cardInfo.asStateFlow()
+class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) : ViewModel() {
+    private val _cardCreationState = MutableStateFlow<CardCreationState>(CardCreationState.Loading)
+    val cardCreationState: StateFlow<CardCreationState> = _cardCreationState.asStateFlow()
+
+    private val _uiState = MutableStateFlow(CardCreationUiState())
+    val uiState: StateFlow<CardCreationUiState> = _uiState.asStateFlow()
+
+    private val _selectedCardId = MutableStateFlow("")
+    val selectedCardId: StateFlow<String> = _selectedCardId.asStateFlow()
+
     private val _currentQuestion = MutableStateFlow(1)
     val currentQuestion: StateFlow<Int> = _currentQuestion.asStateFlow()
-    private val _selectedCardId = MutableStateFlow<String>("")
-    val selectedCardId: StateFlow<String> = _selectedCardId
-    private val _answers = MutableStateFlow<List<Int>>(listOf())
-    val answers: StateFlow<List<Int>> = _answers
 
+    private val _answers = MutableStateFlow(mutableMapOf<Int, String>())
+    val answers: StateFlow<Map<Int, String>> = _answers.asStateFlow()
 
-    fun createCardWithAI(cardInfo: BusinessCardInfo, userAnswers: List<Int>) {
+    fun analyzeCardImage(bitmap: Bitmap, token: String) {
         viewModelScope.launch {
             try {
-                // Prepare AI request with card info and user answers
-                val aiRequest = CreateCardRequest(
-                    name = BilingualTextData(
-                        korean = cardInfo.name.korean,
-                        english = cardInfo.name.english,
-                        isBilingual = cardInfo.isBilingual
-                    ),
-                    company = BilingualTextData(
-                        korean = cardInfo.company.korean,
-                        english = cardInfo.company.english,
-                        isBilingual = cardInfo.isBilingual
-                    ),
-                    position = BilingualTextData(
-                        korean = cardInfo.position.korean,
-                        english = cardInfo.position.english,
-                        isBilingual = cardInfo.isBilingual
-                    ),
-                    phone = cardInfo.phone,
-                    email = cardInfo.email,
-                    sns = cardInfo.sns,
-                    selectedCardId = "ai_design", // Special ID for AI design
-                    answers = userAnswers
+                _uiState.value = _uiState.value.copy(isLoading = true)
+
+                // Convert bitmap to multipart
+                val imageBytes = bitmapToByteArray(bitmap)
+                val requestBody = imageBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+                val imagePart = MultipartBody.Part.createFormData(
+                    "image",
+                    "card_image.jpg",
+                    requestBody
                 )
-                
-                // Call AI API
-                try {
-                    val response = RetrofitInstance.api.createCardWithAI(
-                        token = token.value,
-                        request = aiRequest
+
+                // Call AI analysis with the token
+                val response = api.analyzeCardImage("Bearer $token", imagePart)
+
+                if (response.isSuccessful) {
+                    response.body()?.let { aiResponse ->
+                        _uiState.value = _uiState.value.copy(
+                            cardImages = aiResponse.cardImages,
+                            card = aiResponse.cardInfo,
+                            isLoading = false,
+                            error = null
+                        )
+                    } ?: run {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = "Empty response from server"
+                        )
+                    }
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Failed to analyze image: ${response.message()}"
                     )
-                    
-                    _cardCreationState.value = CardCreationState.Success(response)
-                } catch (e: Exception) {
-                    _cardCreationState.value = CardCreationState.Error("AI 명함 생성에 실패했습니다")
                 }
             } catch (e: Exception) {
-                _cardCreationState.value = CardCreationState.Error(e.message ?: "AI 명함 생성 중 오류가 발생했습니다")
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Error analyzing image: ${e.message}"
+                )
             }
         }
     }
 
-    fun createCard(token: String) {
+    fun selectAndSaveCard(selectedImageIndex: String, base64Image: String) {
         viewModelScope.launch {
             try {
-                _cardCreationState.value = CardCreationState.Loading
-                
-                val request = CreateCardRequest(
-                    name = BilingualTextData(
-                        korean = cardInfo.value.name.korean,
-                        english = cardInfo.value.name.english,
-                        isBilingual = cardInfo.value.isBilingual
-                    ),
-                    company = BilingualTextData(
-                        korean = cardInfo.value.company.korean,
-                        english = cardInfo.value.company.english,
-                        isBilingual = cardInfo.value.isBilingual
-                    ),
-                    position = BilingualTextData(
-                        korean = cardInfo.value.position.korean,
-                        english = cardInfo.value.position.english,
-                        isBilingual = cardInfo.value.isBilingual
-                    ),
-                    phone = cardInfo.value.phone,
-                    email = cardInfo.value.email,
-                    sns = cardInfo.value.sns,
-                    selectedCardId = this@CardCreationViewModel.selectedCardId.value,
-                    answers = answers.value
+                _uiState.value = CardCreationUiState(isLoading = true)
+
+                val currentState = _uiState.value
+                // Convert the string index to Int safely
+                val index = selectedImageIndex.toIntOrNull()
+                    ?: throw IllegalArgumentException("Invalid image index")
+
+                // Ensure the index is within bounds
+                val selectedImage = currentState.cardImages.getOrNull(index)
+                    ?: throw IndexOutOfBoundsException("Image index out of bounds")
+
+                // Create selection request
+                val request = SaveCardRequest(
+                    selectedImage = selectedImage,
+                    cardInfo = currentState.card
                 )
-                val bearerToken = "Bearer $token"
-                val response = RetrofitInstance.api.createCard(bearerToken, request)
-                _creationResult.value = Result.success(response)
+
+                // Save card
+                val response = api.saveCard(request)
+
+                // Update UI
+                _uiState.value = currentState.copy(
+                    isLoading = false,
+                    isSaved = true,
+                    savedCardId = response.id,
+                    error = null
+                )
             } catch (e: Exception) {
-                _creationResult.value = Result.failure(e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
             }
         }
     }
 
-    fun clearResult() {
-        _creationResult.value = null
+    fun recordAnswer(questionNumber: Int, answer: String) {
+        val currentAnswers = _answers.value.toMutableMap()
+        currentAnswers[questionNumber] = answer
+        _answers.value = currentAnswers
+
+        // Move to next question if not at the last question
+        if (questionNumber < 5) {
+            _currentQuestion.value = questionNumber + 1
+        }
     }
 
     fun resetCreation() {
-        _cardInfo.value = BusinessCardInfo()
+        _uiState.value = CardCreationUiState()
         _currentQuestion.value = 1
-        _answers.value = listOf()
-        _selectedCardId.value = ""
+        _answers.value = mutableMapOf()
+        _currentQuestion.value = 1
     }
 
-    fun updateCardInfo(info: BusinessCardInfo) {
-        _cardInfo.value = info
-    }
+    fun enrollCard(token: String, base64Image: String) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
-    fun recordAnswer(questionNumber: Int, answer: Int) {
-        val newAnswers = _answers.value.toMutableList()
-        
-        // Ensure the list has enough elements
-        while (newAnswers.size <= questionNumber - 1) {
-            newAnswers.add(0)
+                val card = _uiState.value.card
+                val request = CardEnrollRequest(
+                    name = card.name,
+                    email = card.email,
+                    company = card.company,
+                    position = card.position,
+                    phone = card.phone,
+                    sns = card.sns ?: "",
+                    base64Image = base64Image
+                )
+
+                val response = api.enrollCard("Bearer $token", request)
+
+                if (response == 200) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        isSaved = true
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Failed to save card: ${response}"
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Error saving card: ${e.message}"
+                )
+            }
         }
-
-        newAnswers[questionNumber - 1] = answer
-        _answers.value = newAnswers
-        
-        // Move to next question
-        _currentQuestion.value = _currentQuestion.value + 1
     }
 
-    fun selectCard(cardId: String) {
-        _selectedCardId.value = cardId
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(error = null)
+    }
+    
+    fun createCardWithAI(cardInfo: BusinessCard, answers: List<String>, token: String) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true)
+                
+                // Convert answers to a map of question numbers to answers
+                val answersMap = answers.mapIndexed { index, answer ->
+                    (index + 1).toString() to answer
+                }.toMap()
+                
+                // Create the request with card info and answers
+                val request = SaveCardRequest(
+                    selectedImage = cardInfo.imageUrl,
+                    cardInfo = cardInfo
+                )
+                
+                // Call the API to create the card with AI
+                val response = api.saveCard(request)
+                
+                // Update the UI state with the created card
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isSaved = true,
+                    savedCardId = response.id,
+                    card = cardInfo.copy(cardId = response.id)
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Failed to create card with AI: ${e.message}"
+                )
+            }
+        }
+    }
+    
+    fun updateCardInfo(cardInfo: BusinessCard) {
+        _uiState.value = _uiState.value.copy(
+            card = _uiState.value.card.copy(
+                name = cardInfo.name,
+                company = cardInfo.company,
+                position = cardInfo.position,
+                phone = cardInfo.phone,
+                email = cardInfo.email,
+                sns = cardInfo.sns,
+                imageUrl = cardInfo.imageUrl
+            )
+        )
+    }
+
+    private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+        return stream.toByteArray()
+    }
+    
+    fun selectCard(cardId: Int) {
+        _selectedCardId.value = cardId.toString()
     }
 }

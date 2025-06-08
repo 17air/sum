@@ -4,7 +4,8 @@ data class BilingualData(
     val korean: String = "",
     val english: String = "",
     val isBilingual: Boolean = false
-) {
+)
+/* {
     
     // Constructor for backward compatibility
     constructor(text: String) : this(
@@ -21,3 +22,11 @@ data class BilingualData(
         fun fromSingleLanguage(text: String) = BilingualData(text)
     }
 }
+
+// Extension function for BusinessCard to handle single language conversion
+fun BusinessCard.toSingleLanguage(): BusinessCard = copy(
+    name = BilingualData(name).toSingleLanguage(),
+    company = BilingualData(company).toSingleLanguage(),
+    position = BilingualData(position).toSingleLanguage()
+)
+*/

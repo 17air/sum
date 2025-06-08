@@ -30,7 +30,7 @@ object TextParser {
         if (otherLines.size > 2) position = otherLines[2]
 
         return BusinessCard(
-            cardid = System.currentTimeMillis().toString(),
+            cardId = System.currentTimeMillis().toString(),
             name = name,
             company = company,
             position = position,
