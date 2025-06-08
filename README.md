@@ -28,3 +28,7 @@ If the network request fails, use one of these test accounts:
 test@example.com / password123
 admin / admin
 ```
+
+### Highlights
+- Newly created cards appear at the top of the card book and are highlighted.
+- Camera permissions are configured so you can capture business cards without crashes.
