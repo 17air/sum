@@ -29,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +56,7 @@ fun AddAutoClassifyScreen(
     val uiState by viewModel.uiState.collectAsState()
     val tokenManager = TokenManager(LocalContext.current)
     val token = tokenManager.getToken() ?: ""
+    var showEditDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.analyzeCardImage(capturedImage, token)
@@ -131,6 +134,12 @@ fun AddAutoClassifyScreen(
                                 DetailItem("전화번호", uiState.card.phone)
                                 DetailItem("이메일", uiState.card.email)
                                 DetailItem("SNS", uiState.card.sns)
+                                Button(
+                                    onClick = { showEditDialog = true },
+                                    modifier = Modifier.align(Alignment.End)
+                                ) {
+                                    Text("정보 수정")
+                                }
                             }
                         }
 
@@ -169,6 +178,17 @@ fun AddAutoClassifyScreen(
                                     )
                                 }
                             }
+                        }
+
+                        if (showEditDialog) {
+                            EditCardScreen(
+                                card = uiState.card,
+                                onSave = { updated ->
+                                    viewModel.updateCardInfo(updated)
+                                    showEditDialog = false
+                                },
+                                onDismiss = { showEditDialog = false }
+                            )
                         }
                     }
                 }
