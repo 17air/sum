@@ -153,7 +153,7 @@ fun CreateDesignScreen(
 @Composable
 fun CardDesignItem(
     design: CardDesign,
-    onClick: @Composable () -> Unit
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -161,7 +161,7 @@ fun CardDesignItem(
             .aspectRatio(0.63f) // Business card ratio
             .clip(RoundedCornerShape(8.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick as () -> Unit)
+            .clickable(onClick = onClick)
     ) {
         if (design.imageUrl.isNotEmpty()) {
             // For network images

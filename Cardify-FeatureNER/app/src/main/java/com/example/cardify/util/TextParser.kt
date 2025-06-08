@@ -37,7 +37,7 @@ object TextParser {
             phone = phone,
             email = email,
             sns = "",
-            imageUrl = null
+            imageUrl = ""
         )
     }
 }

@@ -17,6 +17,16 @@ data class EmailCheckRequest (
 
 //MainCardListRequest는 CardifyApi.kt에서 header에 JWT 담아 전달
 
+data class CardEnrollRequest(
+    val name: String,
+    val email: String,
+    val company: String,
+    val position: String,
+    val phone: String,
+    val sns: String,
+    val base64Image: String
+)
+
 data class BilingualTextData(
     val korean: String,
     val english: String,
