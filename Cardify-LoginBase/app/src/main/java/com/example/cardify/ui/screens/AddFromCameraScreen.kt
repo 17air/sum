@@ -48,7 +48,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.cardify.navigation.Screen
 import java.io.File
@@ -56,17 +55,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
-
-private fun createImageFile(context: Context): File {
-    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val fileName = "JPEG_${timestamp}_"
-    val storageDir = context.getExternalFilesDir(null)
-    return File.createTempFile(
-        fileName,
-        ".jpg",
-        storageDir
-    )
-}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -224,9 +212,7 @@ fun CameraCaptureView(
                         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                             try {
                                 // Convert the saved file to a Bitmap
-                                val inputStream = context.contentResolver.openInputStream(photoFile.toUri())
-                                val bitmap = BitmapFactory.decodeStream(inputStream)
-                                inputStream?.close()
+                                val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
 
                                 if (bitmap != null) {
                                     onImageCaptured(bitmap)
@@ -268,4 +254,4 @@ fun createImageFile(context: Context): File {
         ".jpg",
         storageDir
     )
-}}
+}
