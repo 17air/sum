@@ -27,8 +27,12 @@ class MainScreenViewModel : ViewModel() {
                 // 성공 시 카드 리스트 업데이트
                 _cards.value = result
             } catch (e: Exception) {
-                // 실패 시 오류 메시지 업데이트
-                _error.value = e.message
+                if (token == "dummy-token") {
+                    _cards.value = emptyList()
+                    _error.value = null
+                } else {
+                    _error.value = e.message
+                }
             }
         }
     }

@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,8 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cardify.auth.TokenManager
 import com.example.cardify.models.LoginViewModel
-import com.example.cardify.ui.components.CardifyButton
-import com.example.cardify.ui.components.CardifyTextField
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cardify.models.MainScreenViewModel
+import com.example.cardify.ui.components.PrimaryButton
+import com.example.cardify.ui.components.SimpleTextField
 
 @Composable
 fun LoginScreen(
@@ -45,20 +46,34 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val tokenManager = remember { TokenManager(context) }
+    val mainViewModel: MainScreenViewModel = viewModel()
+    val cards by mainViewModel.cards.collectAsStateWithLifecycle()
 
     //API 응답 받아 성공/실패 처리
     val loginResult by loginViewModel.loginResult.collectAsState()
     LaunchedEffect(loginResult) {
         loginResult?.onSuccess {
-            tokenManager.saveToken(it.token) // 여기서 JWT 토큰 저장
+            tokenManager.saveToken(it.token)
             loginViewModel.clearResult()
+            mainViewModel.fetchCards(it.token)
             onNavigateToMain()
         }?.onFailure {
             showError = true
             errorMessage = "로그인에 실패했어요. 이메일과 비밀번호를 다시 확인해주세요."
+            isLoading = false
+        }
+    }
+
+    // Observe card list and navigate accordingly after login
+    LaunchedEffect(cards) {
+        if (cards.isNotEmpty()) {
+            onNavigateToMain()
+        } else if (loginResult != null && cards.isEmpty()) {
+            onNavigateToMain()
         }
     }
 
@@ -85,37 +100,33 @@ fun LoginScreen(
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // Email Field
-            CardifyTextField(
+            // email input
+            SimpleTextField(
                 value = email,
                 onValueChange = {
                     email = it
                     showError = false
                 },
-                placeholder = "이메일을 입력하세요.",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
+                label = "이메일을 입력하세요.",
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
                 isError = showError,
                 errorMessage = if (showError) errorMessage else null,
             )
 
-            // Password Field
-            CardifyTextField(
+            // password input
+            SimpleTextField(
                 value = password,
                 onValueChange = {
                     password = it
                     showError = false
                 },
-                placeholder = "비밀번호를 입력하세요.",
-                isPassword = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
+                label = "비밀번호를 입력하세요.",
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
                 isError = showError,
                 errorMessage = if (showError) errorMessage else null,
+                visualTransformation = PasswordVisualTransformation()
             )
 
 
@@ -136,16 +147,18 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Login Button
-            CardifyButton(
+            PrimaryButton(
                 text = "로그인",
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
                         showError = true
                         errorMessage = "이메일과 비밀번호를 모두 입력해주세요."
                     } else {
+                        isLoading = true
                         loginViewModel.login(email, password)
                     }
-                }
+                },
+                isLoading = isLoading
             )
 
 
@@ -160,10 +173,9 @@ fun LoginScreen(
             )
 
             // Register Button
-            CardifyButton(
+            PrimaryButton(
                 text = "회원가입",
-                onClick = { onNavigateToRegister() },
-                isPrimary = false
+                onClick = { onNavigateToRegister() }
             )
         }
     }
