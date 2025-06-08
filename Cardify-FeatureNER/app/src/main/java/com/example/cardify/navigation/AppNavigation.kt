@@ -27,6 +27,7 @@ import com.example.cardify.ui.screens.MainEmptyScreen
 import com.example.cardify.ui.screens.MainExistScreen
 import com.example.cardify.ui.screens.OcrNerScreen
 import com.example.cardify.ui.screens.CardBookScreen
+import com.example.cardify.ui.screens.SettingsScreen
 import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.ui.screens.RegisterCompleteScreen
 import com.example.cardify.ui.screens.RegisterScreen
@@ -294,7 +295,13 @@ fun AppNavigation() {
                 onUpdateCard = { cardBookViewModel.updateCard(it) }
             )
         }
-        composable(route = Screen.Settings.route) {}
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(navController = navController) {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(Screen.Main.route) { inclusive = true }
+                }
+            }
+        }
         composable(route = Screen.CardDetail.route + "/{cardId}") {
             val cardId = it.arguments?.getString("cardId")
             // TODO: Implement CardDetailScreen
