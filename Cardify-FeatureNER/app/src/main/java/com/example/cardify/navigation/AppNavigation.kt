@@ -198,6 +198,7 @@ fun AppNavigation() {
                 cardInfo = cardInfo,
                 userAnswers = cardCreationViewModel.answers.value,
                 viewModel = cardCreationViewModel,
+                cardBookViewModel = cardBookViewModel,
                 onProgressComplete = {
                     navController.navigate(Screen.CreateDesign.route)
                 },

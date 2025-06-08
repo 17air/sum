@@ -22,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cardify.models.BusinessCard
 import com.example.cardify.models.BusinessCardInfo
+import com.example.cardify.models.CardBookViewModel
 import com.example.cardify.models.CardCreationViewModel
 import com.example.cardify.ui.theme.PrimaryTeal
 import kotlinx.coroutines.delay
@@ -33,14 +35,38 @@ fun CreateProgressScreen(
     userAnswers: List<Int>,
     onProgressComplete: () -> Unit,
     onCancelClick: () -> Unit,
-    viewModel: CardCreationViewModel
+    viewModel: CardCreationViewModel,
+    cardBookViewModel: CardBookViewModel
 ) {
     LaunchedEffect(key1 = true) {
         // Call AI API with card info and user answers
         viewModel.createCardWithAI(cardInfo, userAnswers)
-        
+
         // Wait for API response
         delay(3000) // 3 seconds delay for API processing
+
+        // Create a local card object to display in the card book
+        val designKey = viewModel.selectedCardId.value.ifBlank { "placeholder" }
+        val resName = when (designKey) {
+            "card1" -> "card_one"
+            "card2" -> "card_two"
+            "card3" -> "card_three"
+            "card4" -> "card_four"
+            "card5" -> "card_five"
+            else -> "card_placeholder"
+        }
+        val card = BusinessCard(
+            cardid = System.currentTimeMillis().toString(),
+            name = cardInfo.name.korean.ifBlank { cardInfo.name.english },
+            company = cardInfo.company.korean.ifBlank { cardInfo.company.english },
+            position = cardInfo.position.korean.ifBlank { cardInfo.position.english },
+            phone = cardInfo.phone,
+            email = cardInfo.email,
+            sns = cardInfo.sns,
+            imageUrl = "android.resource://com.example.cardify/drawable/$resName"
+        )
+        cardBookViewModel.addCard(card)
+
         onProgressComplete()
     }
 

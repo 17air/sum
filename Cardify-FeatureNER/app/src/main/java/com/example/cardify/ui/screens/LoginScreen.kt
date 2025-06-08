@@ -11,11 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cardify.auth.TokenManager
 import com.example.cardify.models.LoginViewModel
+import com.example.cardify.ui.components.CardifyButton
+import com.example.cardify.ui.components.CardifyTextField
 
 @Composable
 fun LoginScreen(
@@ -88,54 +86,32 @@ fun LoginScreen(
             )
 
             // Email Field
-            OutlinedTextField(
+            CardifyTextField(
                 value = email,
                 onValueChange = {
                     email = it
                     showError = false
                 },
-                label = { Text("이메일을 입력하세요.") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
-                    focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                ),
-                shape = RoundedCornerShape(8.dp)
+                label = "이메일을 입력하세요.",
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+                isError = showError,
+                errorMessage = if (showError) errorMessage else null,
             )
 
             // Password Field
-            OutlinedTextField(
+            CardifyTextField(
                 value = password,
                 onValueChange = {
                     password = it
                     showError = false
                 },
-                label = { Text("비밀번호를 입력하세요.") },
-                singleLine = true,
+                label = "비밀번호를 입력하세요.",
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
-                    focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                ),
-                shape = RoundedCornerShape(8.dp)
+                isError = showError,
+                errorMessage = if (showError) errorMessage else null,
             )
 
 
@@ -156,33 +132,17 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Login Button
-            Button(
+            CardifyButton(
+                text = "로그인",
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
                         showError = true
                         errorMessage = "이메일과 비밀번호를 모두 입력해주세요."
-                    } else if (email == "admin" && password == "admin") {
-                        // Allow bypass login when using admin credentials
-                        loginViewModel.clearResult()
-                        onNavigateToMain()
                     } else {
-                        loginViewModel.login(email, password) //code of API request and response
+                        loginViewModel.login(email, password)
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "로그인",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                }
+            )
 
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -196,22 +156,11 @@ fun LoginScreen(
             )
 
             // Register Button
-            Button(
+            CardifyButton(
+                text = "회원가입",
                 onClick = { onNavigateToRegister() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "회원가입",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                isPrimary = false
+            )
         }
     }
 }
