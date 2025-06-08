@@ -19,3 +19,12 @@ Build with:
 Experimental module used for early development.
 
 Choose the project directory that matches the functionality you want to test and run the Gradle build from there.
+
+### Offline login
+Both projects include a fallback so you can sign in without the server.
+If the network request fails, use one of these test accounts:
+
+```
+test@example.com / password123
+admin / admin
+```
