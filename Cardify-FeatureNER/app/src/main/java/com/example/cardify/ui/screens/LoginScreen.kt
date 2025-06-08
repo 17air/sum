@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -28,10 +27,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cardify.auth.TokenManager
-import com.example.cardify.models.LoginViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cardify.auth.TokenManager
+import com.example.cardify.models.LoginViewModel
 import com.example.cardify.models.MainScreenViewModel
 import com.example.cardify.ui.components.PrimaryButton
 import com.example.cardify.ui.components.SimpleTextField
@@ -52,14 +51,16 @@ fun LoginScreen(
     val tokenManager = remember { TokenManager(context) }
     val mainViewModel: MainScreenViewModel = viewModel()
     val cards by mainViewModel.cards.collectAsStateWithLifecycle()
+    val hasCards by mainViewModel.hasCards.collectAsStateWithLifecycle()
 
     //API 응답 받아 성공/실패 처리
     val loginResult by loginViewModel.loginResult.collectAsState()
     LaunchedEffect(loginResult) {
-        loginResult?.onSuccess {
-            tokenManager.saveToken(it.token)
+        loginResult?.onSuccess { response ->
+            tokenManager.saveToken(response.token)
             loginViewModel.clearResult()
-            mainViewModel.fetchCards(it.token)
+            // Fetch user's cards after successful login
+            mainViewModel.fetchCards(response.token)
             onNavigateToMain()
         }?.onFailure {
             showError = true
@@ -68,11 +69,13 @@ fun LoginScreen(
         }
     }
 
-    // Observe card list and navigate accordingly after login
+    // Observe cards state changes
     LaunchedEffect(cards) {
         if (cards.isNotEmpty()) {
+            // If cards are loaded and not empty, navigate to MainExist
             onNavigateToMain()
         } else if (loginResult != null && cards.isEmpty()) {
+            // If cards are loaded but empty, navigate to MainEmpty
             onNavigateToMain()
         }
     }
@@ -103,10 +106,7 @@ fun LoginScreen(
             // email input
             SimpleTextField(
                 value = email,
-                onValueChange = {
-                    email = it
-                    showError = false
-                },
+                onValueChange = { email = it },
                 label = "이메일을 입력하세요.",
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -117,10 +117,7 @@ fun LoginScreen(
             // password input
             SimpleTextField(
                 value = password,
-                onValueChange = {
-                    password = it
-                    showError = false
-                },
+                onValueChange = { password = it },
                 label = "비밀번호를 입력하세요.",
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
@@ -129,24 +126,9 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation()
             )
 
-
-
-            // Error Message
-            if (showError) {
-                Text(
-                    text = errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    textAlign = TextAlign.Center
-                )
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Login Button
+            // login button
             PrimaryButton(
                 text = "로그인",
                 onClick = {
@@ -157,10 +139,9 @@ fun LoginScreen(
                         isLoading = true
                         loginViewModel.login(email, password)
                     }
-                },
+                }, 
                 isLoading = isLoading
             )
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
