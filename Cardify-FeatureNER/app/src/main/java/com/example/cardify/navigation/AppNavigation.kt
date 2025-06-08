@@ -205,7 +205,6 @@ fun AppNavigation() {
 
             CreateProgressScreen(
                 cardInfo = cardInfo,
-                userAnswers = cardCreationViewModel.answers.value.values.toList(),
                 viewModel = cardCreationViewModel,
                 token = token,
                 cardBookViewModel = cardBookViewModel,
@@ -222,8 +221,8 @@ fun AppNavigation() {
         composable(route = Screen.CreateDesign.route) {
             CreateDesignScreen(
                 isFirst = true,
-                onCardSelected = { cardId, image ->
-                    cardCreationViewModel.selectAndSaveCard(cardId, image)
+                onCardSelected = { cardId, _ ->
+                    cardCreationViewModel.selectAndSaveCard(cardId)
                     navController.navigate(Screen.CreateDesign.route + "?showOptions=true")
                 },
                 onCancelClick = {
@@ -236,8 +235,8 @@ fun AppNavigation() {
         composable(route = Screen.CreateDesign.route + "?showOptions=true") {
             CreateDesignScreen(
                 isFirst = false,
-                onCardSelected = { cardId, image ->
-                    cardCreationViewModel.selectAndSaveCard(cardId, image)
+                onCardSelected = { cardId, _ ->
+                    cardCreationViewModel.selectAndSaveCard(cardId)
                     navController.navigate(Screen.CreateConfirm.route)
                 },
                 onCancelClick = {

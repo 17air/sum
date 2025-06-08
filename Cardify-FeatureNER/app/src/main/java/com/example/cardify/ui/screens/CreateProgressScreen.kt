@@ -31,7 +31,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun CreateProgressScreen(
     cardInfo: BusinessCard,
-    userAnswers: List<String>,
     onProgressComplete: () -> Unit,
     onCancelClick: () -> Unit,
     viewModel: CardCreationViewModel,
@@ -40,7 +39,7 @@ fun CreateProgressScreen(
 ) {
     LaunchedEffect(key1 = true) {
         // Call AI API with card info and user answers
-        viewModel.createCardWithAI(cardInfo, userAnswers, token)
+    viewModel.createCardWithAI(cardInfo, token)
 
         // Wait for API response
         delay(3000) // 3 seconds delay for API processing

@@ -208,7 +208,7 @@ fun CreateEssentialsScreen(
                     text = "다음",
                     onClick = {
                         viewModel.updateCardInfo(cardInfo)
-                        viewModel.selectAndSaveCard("", "")  //empty string since there is no value now
+                        viewModel.selectAndSaveCard("")
                     },
                     modifier = Modifier
                         .fillMaxWidth()

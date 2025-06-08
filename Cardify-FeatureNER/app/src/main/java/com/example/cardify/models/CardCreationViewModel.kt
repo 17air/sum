@@ -93,7 +93,7 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
         }
     }
 
-    fun selectAndSaveCard(selectedImageIndex: String, base64Image: String) {
+    fun selectAndSaveCard(selectedImageIndex: String) {
         viewModelScope.launch {
             try {
                 _uiState.value = CardCreationUiState(isLoading = true)
@@ -192,17 +192,12 @@ class CardCreationViewModel(private val api: CardifyApi = RetrofitInstance.api) 
         _uiState.value = _uiState.value.copy(error = null)
     }
     
-    fun createCardWithAI(cardInfo: BusinessCard, answers: List<String>, token: String) {
+    fun createCardWithAI(cardInfo: BusinessCard, token: String) {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isLoading = true)
                 
-                // Convert answers to a map of question numbers to answers
-                val answersMap = answers.mapIndexed { index, answer ->
-                    (index + 1).toString() to answer
-                }.toMap()
-                
-                // Create the request with card info and answers
+                // Create the request with the provided card info
                 val request = SaveCardRequest(
                     selectedImage = cardInfo.imageUrl,
                     cardInfo = cardInfo
