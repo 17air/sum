@@ -275,8 +275,10 @@ fun AppNavigation() {
 
         composable(route = Screen.CardBook.route) {
             val cards by cardBookViewModel.cards.collectAsState()
+            val highlighted by cardBookViewModel.highlightedCardId.collectAsState()
             CardBookScreen(
                 cards = cards,
+                highlightedCardId = highlighted,
                 onNavigateToMain = { navController.navigate(Screen.Main.route) },
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                 onUpdateCard = { cardBookViewModel.updateCard(it) }

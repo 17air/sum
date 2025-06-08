@@ -30,6 +30,7 @@ import com.example.cardify.ui.components.BusinessCardItem
 @Composable
 fun CardBookScreen(
     cards: List<BusinessCard>,
+    highlightedCardId: String?,
     onNavigateToMain: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onUpdateCard: (BusinessCard) -> Unit,
@@ -59,7 +60,8 @@ fun CardBookScreen(
                         card = card,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         onImageClick = { url -> selectedImage.value = url },
-                        onEditClick = { editingCard.value = card }
+                        onEditClick = { editingCard.value = card },
+                        isHighlighted = card.cardid == highlightedCardId
                     )
                 }
             }

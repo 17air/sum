@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -38,7 +39,8 @@ fun BusinessCardItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     onImageClick: ((String?) -> Unit)? = null,
-    onEditClick: (() -> Unit)? = null
+    onEditClick: (() -> Unit)? = null,
+    isHighlighted: Boolean = false
 ) {
     Card(
         modifier = modifier
@@ -53,6 +55,7 @@ fun BusinessCardItem(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
+        border = if (isHighlighted) BorderStroke(2.dp, PrimaryTeal) else null,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
         )

@@ -8,14 +8,22 @@ class CardBookViewModel : ViewModel() {
     private val _cards = MutableStateFlow<List<BusinessCard>>(emptyList())
     val cards: StateFlow<List<BusinessCard>> = _cards
 
+    private val _highlightedCardId = MutableStateFlow<String?>(null)
+    val highlightedCardId: StateFlow<String?> = _highlightedCardId
+
     fun addCard(card: BusinessCard) {
-        _cards.value = _cards.value + card
+        _cards.value = listOf(card) + _cards.value
+        _highlightedCardId.value = card.cardid
     }
 
     fun updateCard(updated: BusinessCard) {
         _cards.value = _cards.value.map {
             if (it.cardid == updated.cardid) updated else it
         }
+    }
+
+    fun clearHighlight() {
+        _highlightedCardId.value = null
     }
 }
 
