@@ -92,9 +92,11 @@ fun LoginScreen(
                     email = it
                     showError = false
                 },
-                label = "이메일을 입력하세요.",
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next,
+                placeholder = "이메일을 입력하세요.",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
                 isError = showError,
                 errorMessage = if (showError) errorMessage else null,
             )
@@ -106,10 +108,12 @@ fun LoginScreen(
                     password = it
                     showError = false
                 },
-                label = "비밀번호를 입력하세요.",
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done,
-                visualTransformation = PasswordVisualTransformation(),
+                placeholder = "비밀번호를 입력하세요.",
+                isPassword = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
                 isError = showError,
                 errorMessage = if (showError) errorMessage else null,
             )
